@@ -1525,8 +1525,8 @@ const dashboardData = {
                         "pctWithin1min": 78.6
                     }
                 },
-                "targetAccuracy": null,
-                "targetDate": null
+                "targetAccuracy": "75%",
+                "targetDate": "29 Jan"
             },
             {
                 "event": "Bus Passenger Disembarkment - End",
@@ -1559,8 +1559,8 @@ const dashboardData = {
                         "pctWithin1min": 72.7
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "78%",
+                "targetDate": "29 Feb"
             },
             {
                 "event": "Baggage Onload FWD - End",
@@ -1665,8 +1665,8 @@ const dashboardData = {
                         "pctWithin1min": 75
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "90%",
+                "targetDate": "12 Mar"
             },
             {
                 "event": "Stairs FWD connected - Start",
@@ -1795,8 +1795,8 @@ const dashboardData = {
                         "pctWithin1min": 78.9
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "19 Feb"
             },
             {
                 "event": "Conveyer Belt FWD connected - End",
@@ -1845,8 +1845,8 @@ const dashboardData = {
                         "pctWithin1min": 76.2
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "19 Feb"
             },
             {
                 "event": "Windsheild Cleaning connected - End",
@@ -1925,8 +1925,8 @@ const dashboardData = {
                         "pctWithin1min": 78.6
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "29 Jan"
             },
             {
                 "event": "High loader AFT connected - End",
@@ -1959,8 +1959,8 @@ const dashboardData = {
                         "pctWithin1min": 66.7
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Feb"
             },
             {
                 "event": "Baggage Offload FWD - Start",
@@ -2009,8 +2009,8 @@ const dashboardData = {
                         "pctWithin1min": 76.9
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "29 Jan"
             },
             {
                 "event": "Container Offload FWD - Start",
@@ -2043,8 +2043,8 @@ const dashboardData = {
                         "pctWithin1min": 65.2
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Feb"
             },
             {
                 "event": "Aircraft Passenger Embark - Start",
@@ -2105,8 +2105,8 @@ const dashboardData = {
                         "pctWithin1min": 60.9
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Mar"
             },
             {
                 "event": "Jet bridge AFT - Start",
@@ -2139,8 +2139,8 @@ const dashboardData = {
                         "pctWithin1min": 75
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "90%",
+                "targetDate": "12 Mar"
             },
             {
                 "event": "Aircraft Passenger Embark - End",
@@ -2201,8 +2201,8 @@ const dashboardData = {
                         "pctWithin1min": 65.2
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Mar"
             },
             {
                 "event": "Aircraft Passenger Disembark - End",
@@ -2263,8 +2263,8 @@ const dashboardData = {
                         "pctWithin1min": 64
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Mar"
             },
             {
                 "event": "Container Offload FWD - End",
@@ -2297,8 +2297,8 @@ const dashboardData = {
                         "pctWithin1min": 60.9
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Feb"
             },
             {
                 "event": "Bus Passenger Embark - End",
@@ -2331,8 +2331,8 @@ const dashboardData = {
                         "pctWithin1min": 58.8
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "70%",
+                "targetDate": "29 Feb"
             },
             {
                 "event": "Conveyer Belt Bulk connected - Start",
@@ -2361,8 +2361,8 @@ const dashboardData = {
                         "pctWithin1min": 57.1
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "70%",
+                "targetDate": "19 Feb"
             },
             {
                 "event": "Baggage Offload AFT - End",
@@ -2403,8 +2403,8 @@ const dashboardData = {
                         "pctWithin1min": 71.4
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "29 Jan"
             },
             {
                 "event": "Fueling connected - Start",
@@ -2445,8 +2445,8 @@ const dashboardData = {
                         "pctWithin1min": 80
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "90%",
+                "targetDate": "12 Mar"
             },
             {
                 "event": "Container Offload AFT - End",
@@ -2479,8 +2479,8 @@ const dashboardData = {
                         "pctWithin1min": 50
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Feb"
             },
             {
                 "event": "Baggage Onload AFT - Start",
@@ -2517,8 +2517,8 @@ const dashboardData = {
                         "pctWithin1min": 75
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Feb"
             },
             {
                 "event": "Baggage Onload FWD - Start",
@@ -2555,8 +2555,8 @@ const dashboardData = {
                         "pctWithin1min": 66.7
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Feb"
             },
             {
                 "event": "Aircraft Passenger Disembark - Start",
@@ -2617,8 +2617,8 @@ const dashboardData = {
                         "pctWithin1min": 44
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Mar"
             },
             {
                 "event": "Baggage Onload AFT - End",
@@ -2655,8 +2655,8 @@ const dashboardData = {
                         "pctWithin1min": 50
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "5 Feb"
             },
             {
                 "event": "First Bus Arrival Time",
@@ -2681,8 +2681,8 @@ const dashboardData = {
                         "pctWithin1min": 0
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "60%",
+                "targetDate": "12 Mar"
             },
             {
                 "event": "Container Onload AFT - Start",
@@ -2707,8 +2707,8 @@ const dashboardData = {
                         "pctWithin1min": 0
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "12 Feb"
             },
             {
                 "event": "Container Onload FWD - End",
@@ -2733,8 +2733,8 @@ const dashboardData = {
                         "pctWithin1min": 0
                     }
                 },
-                "targetAccuracy": "TBD %",
-                "targetDate": "TBD"
+                "targetAccuracy": "75%",
+                "targetDate": "12 Feb"
             },
             {
                 "event": "Container Onload FWD - Start",
@@ -2981,3 +2981,5 @@ const dashboardData = {
         "events": []
     }
 };
+
+dashboardData.C.events = dashboardData.B.events;
