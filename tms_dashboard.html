@@ -123,10 +123,16 @@
                         else return null;
                     }
                     stats.avgAccuracy = (stats.pctWithin1min + stats.pctWithin2min) / 2;
+                    stats.status = getAccuracyLabel(stats.pctWithin1min, stats.pctWithin2min);
                     return stats;
                 }).filter(e => e !== null);
                 if (searchQuery) result = result.filter(e => e.event.toLowerCase().includes(searchQuery.toLowerCase()));
-                result.sort((a, b) => sortConfig.direction === 'asc' ? a[sortConfig.key] - b[sortConfig.key] : b[sortConfig.key] - a[sortConfig.key]);
+                const statusOrder = { 'Excellent': 1, 'Good': 2, 'Satisfactory': 3, 'Needs Improvement': 4 };
+                if (sortConfig.key === 'status') {
+                    result.sort((a, b) => sortConfig.direction === 'asc' ? statusOrder[a.status] - statusOrder[b.status] : statusOrder[b.status] - statusOrder[a.status]);
+                } else {
+                    result.sort((a, b) => sortConfig.direction === 'asc' ? a[sortConfig.key] - b[sortConfig.key] : b[sortConfig.key] - a[sortConfig.key]);
+                }
                 return result;
             }, [events, terminalFilter, timeSlotFilter, durationFilter, searchQuery, sortConfig]);
 
@@ -285,16 +291,16 @@
                                                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('count')}>Samples</th>
                                                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('pctWithin1min')}>≤1min</th>
                                                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('pctWithin2min')}>≤2min</th>
-                                                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('avgAccuracy')}>Status</th>
+                                                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('status')}>Status</th>
                                                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase bg-blue-50">Target Accuracy</th>
                                                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase bg-blue-50">Target Date</th>
                                             </tr>
                                         </thead>
                                         <tbody className="bg-white divide-y divide-gray-200">
                                             {filteredEvents.map(ev => {
-                                                const status = getAccuracyLabel(ev.pctWithin1min, ev.pctWithin2min);
+                                                const status = ev.status;
                                                 const colorClass = status === 'Excellent' ? 'bg-emerald-100 text-emerald-800' : status === 'Good' ? 'bg-green-100 text-green-800' : status === 'Satisfactory' ? 'bg-lime-100 text-lime-800' : 'bg-amber-100 text-amber-800';
-                                                const needsTarget = ev.pctWithin1min < 80;
+                                                const needsTarget = status === 'Satisfactory' || status === 'Needs Improvement';
                                                 return (
                                                     <tr key={ev.event} className="hover:bg-gray-50">
                                                         <td className="px-4 py-3 text-sm font-medium text-gray-700">{ev.event}</td>
