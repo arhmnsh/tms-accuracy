@@ -99,7 +99,7 @@
             const [timeSlotFilter, setTimeSlotFilter] = useState('all');
             const [durationFilter, setDurationFilter] = useState('all');
             const [searchQuery, setSearchQuery] = useState('');
-            const [sortConfig, setSortConfig] = useState({ key: 'avgAccuracy', direction: 'desc' });
+            const [sortConfig, setSortConfig] = useState({ key: 'status', direction: 'desc' });
 
             const currentData = dashboardData[selectedOption];
             const events = currentData.events || [];
