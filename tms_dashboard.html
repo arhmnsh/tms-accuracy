@@ -91,7 +91,7 @@
             );
         };
 
-        function TMSDashboard() {
+        function DashboardContent() {
             const [selectedOption, setSelectedOption] = useState('B');
             const [selectedView, setSelectedView] = useState('executive');
             const [settingsOpen, setSettingsOpen] = useState(false);
@@ -335,6 +335,58 @@
                     </div>
                 </div>
             );
+        }
+
+        function TMSDashboard() {
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                if (password === 'tms_admin') {
+                    setIsAuthenticated(true);
+                    setError('');
+                } else {
+                    setError('Incorrect password');
+                }
+            };
+
+            if (!isAuthenticated) {
+                return (
+                    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-lg shadow-md p-8 w-full max-w-sm">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Protected Dashboard</h2>
+                            <form onSubmit={handleLogin}>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                                        Password
+                                    </label>
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Enter password"
+                                    />
+                                    {error && <p className="text-red-500 text-xs italic mb-2">{error}</p>}
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <button
+                                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                                        type="submit"
+                                    >
+                                        Access Dashboard
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            return <DashboardContent />;
         }
 
         ReactDOM.createRoot(document.getElementById('root')).render(<TMSDashboard />);
