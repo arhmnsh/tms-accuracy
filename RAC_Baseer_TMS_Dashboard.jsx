@@ -1,0 +1,328 @@
+import React, { useState, useMemo } from 'react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { Settings, CheckCircle2, Plane, ChevronDown, Search, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+
+const dashboardData = {"B":{"name":"Recommended","description":"Excludes 6 severely problematic turnarounds","overall":{"totalTurnarounds":111,"totalDataPoints":1813,"pctWithin1min":77.4,"pctWithin2min":85.4,"pctWithin5min":91.5},"filters":{"terminals":["Apron6","CARGO","Cargo","Far East","T1","T3","T4","T5"],"terminalStands":{"T1":["ST104","ST105","ST106","ST108"],"T3":["ST303","ST305","ST306"],"T4":["ST401","ST403","ST404","ST406M","ST407"],"T5":["511"],"Far East":["E20","E20L","E21R","E22L","E22R"],"CARGO":["C2","C3","C4","C5","C6"],"Cargo":["C2C"],"Apron6":["E20L","E21R","ST506R"]},"timeSlots":["Early Morning","Morning","Afternoon","Evening","Night"],"durations":["Short","Medium","Long","Unknown"]},"events":[{"event":"Disembark Bus Count","count":8,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"Far East":{"count":4,"pctWithin1min":100.0},"CARGO":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":4,"pctWithin1min":100.0},"Afternoon":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Medium":{"count":2,"pctWithin1min":100.0},"Unknown":{"count":6,"pctWithin1min":100.0}}},{"event":"Embark Bus Count","count":10,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"Far East":{"count":5,"pctWithin1min":100.0},"Apron6":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":5,"pctWithin1min":100.0},"Evening":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":10,"pctWithin1min":100.0}}},{"event":"Total Bus Count","count":8,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"Far East":{"count":4,"pctWithin1min":100.0},"Apron6":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":4,"pctWithin1min":100.0},"Afternoon":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":8,"pctWithin1min":100.0}}},{"event":"Medical Lift connected - End","count":2,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"T4":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Night":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":2,"pctWithin1min":100.0}}},{"event":"Medical Lift connected - Start","count":2,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"T4":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Night":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":2,"pctWithin1min":100.0}}},{"event":"Windsheild Cleaning connected - Start","count":3,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"T4":{"count":3,"pctWithin1min":100.0}},"byTimeSlot":{"Night":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":3,"pctWithin1min":100.0}}},{"event":"Water Truck connected - Start","count":4,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"T4":{"count":2,"pctWithin1min":100.0},"CARGO":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Night":{"count":3,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":4,"pctWithin1min":100.0}}},{"event":"Stairs AFT connected - End","count":3,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"Far East":{"count":3,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":3,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":3,"pctWithin1min":100.0}}},{"event":"Stairs AFT connected - Start","count":3,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"Far East":{"count":3,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":3,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":3,"pctWithin1min":100.0}}},{"event":"TA Start Time","count":63,"pctWithin1min":95.2,"pctWithin2min":95.2,"byTerminal":{"T1":{"count":18,"pctWithin1min":100.0},"T3":{"count":24,"pctWithin1min":100.0},"T4":{"count":18,"pctWithin1min":83.3}},"byTimeSlot":{"Morning":{"count":20,"pctWithin1min":95.0},"Afternoon":{"count":18,"pctWithin1min":94.4},"Evening":{"count":12,"pctWithin1min":100.0},"Night":{"count":13,"pctWithin1min":92.3}},"byDuration":{"Medium":{"count":32,"pctWithin1min":96.9},"Long":{"count":6,"pctWithin1min":100.0},"Short":{"count":5,"pctWithin1min":100.0},"Unknown":{"count":20,"pctWithin1min":90.0}}},{"event":"Pushback Tug Connected - End","count":68,"pctWithin1min":94.1,"pctWithin2min":97.1,"byTerminal":{"T1":{"count":17,"pctWithin1min":100.0},"T3":{"count":14,"pctWithin1min":92.9},"T4":{"count":17,"pctWithin1min":88.2}},"byTimeSlot":{"Morning":{"count":20,"pctWithin1min":95.0},"Afternoon":{"count":16,"pctWithin1min":93.8},"Evening":{"count":14,"pctWithin1min":92.9},"Night":{"count":18,"pctWithin1min":94.4}},"byDuration":{"Medium":{"count":36,"pctWithin1min":97.2},"Long":{"count":7,"pctWithin1min":100.0},"Short":{"count":6,"pctWithin1min":83.3},"Unknown":{"count":19,"pctWithin1min":89.5}}},{"event":"TA End Time","count":60,"pctWithin1min":93.3,"pctWithin2min":98.3,"byTerminal":{"T1":{"count":17,"pctWithin1min":94.1},"T3":{"count":22,"pctWithin1min":95.5},"T4":{"count":18,"pctWithin1min":88.9}},"byTimeSlot":{"Morning":{"count":19,"pctWithin1min":94.7},"Afternoon":{"count":17,"pctWithin1min":94.1},"Evening":{"count":11,"pctWithin1min":90.9},"Night":{"count":13,"pctWithin1min":92.3}},"byDuration":{"Medium":{"count":31,"pctWithin1min":96.8},"Long":{"count":5,"pctWithin1min":100.0},"Short":{"count":5,"pctWithin1min":100.0},"Unknown":{"count":19,"pctWithin1min":84.2}}},{"event":"Jet bridge FWD - End","count":71,"pctWithin1min":93.0,"pctWithin2min":94.4,"byTerminal":{"T1":{"count":13,"pctWithin1min":92.3},"T3":{"count":12,"pctWithin1min":91.7},"T4":{"count":17,"pctWithin1min":94.1}},"byTimeSlot":{"Morning":{"count":18,"pctWithin1min":94.4},"Afternoon":{"count":18,"pctWithin1min":94.4},"Evening":{"count":16,"pctWithin1min":93.8},"Night":{"count":19,"pctWithin1min":89.5}},"byDuration":{"Medium":{"count":33,"pctWithin1min":93.9},"Long":{"count":8,"pctWithin1min":100.0},"Short":{"count":6,"pctWithin1min":100.0},"Unknown":{"count":24,"pctWithin1min":87.5}}},{"event":"Jet bridge FWD - Start","count":71,"pctWithin1min":93.0,"pctWithin2min":98.6,"byTerminal":{"T1":{"count":13,"pctWithin1min":92.3},"T3":{"count":12,"pctWithin1min":100.0},"T4":{"count":17,"pctWithin1min":88.2}},"byTimeSlot":{"Morning":{"count":18,"pctWithin1min":94.4},"Afternoon":{"count":18,"pctWithin1min":88.9},"Evening":{"count":16,"pctWithin1min":93.8},"Night":{"count":19,"pctWithin1min":94.7}},"byDuration":{"Medium":{"count":33,"pctWithin1min":90.9},"Long":{"count":8,"pctWithin1min":100.0},"Short":{"count":6,"pctWithin1min":100.0},"Unknown":{"count":24,"pctWithin1min":91.7}}},{"event":"ACU connected - Start","count":14,"pctWithin1min":92.9,"pctWithin2min":92.9,"byTerminal":{"T4":{"count":10,"pctWithin1min":90.0},"T3":{"count":4,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":5,"pctWithin1min":100.0},"Afternoon":{"count":4,"pctWithin1min":100.0},"Night":{"count":5,"pctWithin1min":80.0}},"byDuration":{"Medium":{"count":9,"pctWithin1min":88.9},"Unknown":{"count":5,"pctWithin1min":100.0}}},{"event":"Passenger Door Open - End","count":102,"pctWithin1min":92.2,"pctWithin2min":93.1,"byTerminal":{"T1":{"count":18,"pctWithin1min":94.4},"T3":{"count":17,"pctWithin1min":94.1},"T4":{"count":17,"pctWithin1min":94.1},"Far East":{"count":12,"pctWithin1min":91.7},"T5":{"count":8,"pctWithin1min":87.5}},"byTimeSlot":{"Morning":{"count":28,"pctWithin1min":92.9},"Afternoon":{"count":26,"pctWithin1min":96.2},"Evening":{"count":20,"pctWithin1min":90.0},"Night":{"count":22,"pctWithin1min":86.4}},"byDuration":{"Medium":{"count":42,"pctWithin1min":95.2},"Long":{"count":10,"pctWithin1min":100.0},"Short":{"count":9,"pctWithin1min":88.9},"Unknown":{"count":41,"pctWithin1min":87.8}}},{"event":"Passenger Door Open - Start","count":101,"pctWithin1min":92.1,"pctWithin2min":94.1,"byTerminal":{"T1":{"count":18,"pctWithin1min":88.9},"T3":{"count":17,"pctWithin1min":94.1},"T4":{"count":17,"pctWithin1min":88.2},"Far East":{"count":12,"pctWithin1min":91.7}},"byTimeSlot":{"Morning":{"count":28,"pctWithin1min":92.9},"Afternoon":{"count":25,"pctWithin1min":96.0},"Evening":{"count":20,"pctWithin1min":85.0},"Night":{"count":22,"pctWithin1min":90.9}},"byDuration":{"Medium":{"count":42,"pctWithin1min":92.9},"Long":{"count":10,"pctWithin1min":90.0},"Short":{"count":9,"pctWithin1min":88.9},"Unknown":{"count":40,"pctWithin1min":92.5}}},{"event":"Compartment Door - Start","count":50,"pctWithin1min":90.0,"pctWithin2min":94.0,"byTerminal":{"T1":{"count":7,"pctWithin1min":85.7},"T3":{"count":9,"pctWithin1min":88.9},"T4":{"count":12,"pctWithin1min":91.7}},"byTimeSlot":{"Morning":{"count":17,"pctWithin1min":94.1},"Afternoon":{"count":13,"pctWithin1min":84.6},"Evening":{"count":9,"pctWithin1min":88.9},"Night":{"count":11,"pctWithin1min":90.9}},"byDuration":{"Medium":{"count":23,"pctWithin1min":91.3},"Long":{"count":7,"pctWithin1min":100.0},"Short":{"count":4,"pctWithin1min":75.0},"Unknown":{"count":16,"pctWithin1min":87.5}}},{"event":"Bus Passenger Disembarkment - Start","count":10,"pctWithin1min":90.0,"pctWithin2min":90.0,"byTerminal":{"Far East":{"count":5,"pctWithin1min":80.0},"Apron6":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":5,"pctWithin1min":80.0},"Evening":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":10,"pctWithin1min":90.0}}},{"event":"Bus Passenger Embark - Start","count":17,"pctWithin1min":88.2,"pctWithin2min":88.2,"byTerminal":{"Far East":{"count":8,"pctWithin1min":87.5},"Apron6":{"count":4,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":9,"pctWithin1min":88.9},"Evening":{"count":4,"pctWithin1min":75.0}},"byDuration":{"Unknown":{"count":17,"pctWithin1min":88.2}}},{"event":"Container Offload AFT - Start","count":14,"pctWithin1min":85.7,"pctWithin2min":85.7,"byTerminal":{"CARGO":{"count":7,"pctWithin1min":85.7},"Cargo":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Early Morning":{"count":3,"pctWithin1min":66.7},"Night":{"count":5,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":14,"pctWithin1min":85.7}}},{"event":"Pushback Tug connected - Start","count":70,"pctWithin1min":85.7,"pctWithin2min":91.4,"byTerminal":{"T1":{"count":17,"pctWithin1min":82.4},"T3":{"count":15,"pctWithin1min":86.7},"T4":{"count":17,"pctWithin1min":88.2}},"byTimeSlot":{"Morning":{"count":20,"pctWithin1min":90.0},"Afternoon":{"count":18,"pctWithin1min":88.9},"Evening":{"count":14,"pctWithin1min":78.6},"Night":{"count":18,"pctWithin1min":83.3}},"byDuration":{"Medium":{"count":36,"pctWithin1min":86.1},"Long":{"count":7,"pctWithin1min":100.0},"Short":{"count":6,"pctWithin1min":66.7},"Unknown":{"count":21,"pctWithin1min":85.7}}},{"event":"ACU Connected - End","count":14,"pctWithin1min":85.7,"pctWithin2min":92.9,"byTerminal":{"T4":{"count":10,"pctWithin1min":80.0},"T3":{"count":4,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":5,"pctWithin1min":80.0},"Afternoon":{"count":4,"pctWithin1min":100.0},"Night":{"count":5,"pctWithin1min":80.0}},"byDuration":{"Medium":{"count":9,"pctWithin1min":77.8},"Unknown":{"count":5,"pctWithin1min":100.0}}},{"event":"Conveyer Belt Bulk connected - End","count":6,"pctWithin1min":83.3,"pctWithin2min":83.3,"byTerminal":{"CARGO":{"count":6,"pctWithin1min":83.3}},"byTimeSlot":{"Early Morning":{"count":4,"pctWithin1min":75.0},"Morning":{"count":2,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":6,"pctWithin1min":83.3}}},{"event":"Cargo Door FWD - Start","count":55,"pctWithin1min":81.8,"pctWithin2min":87.3,"byTerminal":{"T4":{"count":6,"pctWithin1min":66.7},"Far East":{"count":12,"pctWithin1min":83.3},"CARGO":{"count":7,"pctWithin1min":85.7}},"byTimeSlot":{"Morning":{"count":18,"pctWithin1min":83.3},"Afternoon":{"count":13,"pctWithin1min":76.9},"Evening":{"count":10,"pctWithin1min":80.0},"Night":{"count":14,"pctWithin1min":85.7}},"byDuration":{"Medium":{"count":21,"pctWithin1min":85.7},"Long":{"count":5,"pctWithin1min":80.0},"Unknown":{"count":29,"pctWithin1min":79.3}}},{"event":"Stairs FWD connected - End","count":26,"pctWithin1min":80.8,"pctWithin2min":84.6,"byTerminal":{"Far East":{"count":12,"pctWithin1min":75.0},"Apron6":{"count":6,"pctWithin1min":83.3}},"byTimeSlot":{"Morning":{"count":16,"pctWithin1min":81.2},"Evening":{"count":4,"pctWithin1min":75.0}},"byDuration":{"Unknown":{"count":26,"pctWithin1min":80.8}}},{"event":"Fueling connected - End","count":15,"pctWithin1min":80.0,"pctWithin2min":86.7,"byTerminal":{"T4":{"count":11,"pctWithin1min":81.8},"Far East":{"count":2,"pctWithin1min":50.0}},"byTimeSlot":{"Morning":{"count":4,"pctWithin1min":75.0},"Afternoon":{"count":4,"pctWithin1min":100.0},"Night":{"count":7,"pctWithin1min":71.4}},"byDuration":{"Medium":{"count":10,"pctWithin1min":80.0},"Unknown":{"count":5,"pctWithin1min":80.0}}},{"event":"Compartment Door - End","count":50,"pctWithin1min":80.0,"pctWithin2min":86.0,"byTerminal":{"T1":{"count":7,"pctWithin1min":71.4},"T3":{"count":9,"pctWithin1min":77.8},"T4":{"count":12,"pctWithin1min":83.3}},"byTimeSlot":{"Morning":{"count":17,"pctWithin1min":82.4},"Afternoon":{"count":13,"pctWithin1min":76.9},"Evening":{"count":9,"pctWithin1min":77.8},"Night":{"count":11,"pctWithin1min":81.8}},"byDuration":{"Medium":{"count":23,"pctWithin1min":82.6},"Long":{"count":7,"pctWithin1min":85.7},"Short":{"count":4,"pctWithin1min":50.0},"Unknown":{"count":16,"pctWithin1min":81.2}}},{"event":"Conveyer Belt AFT connected - Start","count":40,"pctWithin1min":80.0,"pctWithin2min":92.5,"byTerminal":{"Far East":{"count":10,"pctWithin1min":70.0},"CARGO":{"count":7,"pctWithin1min":85.7}},"byTimeSlot":{"Morning":{"count":15,"pctWithin1min":73.3},"Afternoon":{"count":10,"pctWithin1min":80.0},"Evening":{"count":6,"pctWithin1min":100.0},"Night":{"count":9,"pctWithin1min":77.8}},"byDuration":{"Medium":{"count":6,"pctWithin1min":66.7},"Unknown":{"count":34,"pctWithin1min":82.4}}},{"event":"High loader FWD connected","count":26,"pctWithin1min":76.9,"pctWithin2min":84.6,"byTerminal":{"Far East":{"count":12,"pctWithin1min":75.0},"CARGO":{"count":7,"pctWithin1min":85.7}},"byTimeSlot":{"Morning":{"count":10,"pctWithin1min":70.0},"Night":{"count":8,"pctWithin1min":87.5}},"byDuration":{"Unknown":{"count":26,"pctWithin1min":76.9}}},{"event":"Water Truck connected - End","count":4,"pctWithin1min":75.0,"pctWithin2min":100.0,"byTerminal":{"T4":{"count":2,"pctWithin1min":50.0},"CARGO":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Night":{"count":3,"pctWithin1min":66.7},"Morning":{"count":1,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":4,"pctWithin1min":75.0}}},{"event":"Cargo Door FWD - End","count":56,"pctWithin1min":73.2,"pctWithin2min":78.6,"byTerminal":{"T4":{"count":7,"pctWithin1min":57.1},"Far East":{"count":12,"pctWithin1min":66.7},"CARGO":{"count":7,"pctWithin1min":85.7}},"byTimeSlot":{"Morning":{"count":18,"pctWithin1min":72.2},"Afternoon":{"count":14,"pctWithin1min":71.4},"Evening":{"count":10,"pctWithin1min":70.0},"Night":{"count":14,"pctWithin1min":78.6}},"byDuration":{"Medium":{"count":21,"pctWithin1min":76.2},"Long":{"count":5,"pctWithin1min":60.0},"Unknown":{"count":30,"pctWithin1min":73.3}}},{"event":"High loader FWD connected - End","count":26,"pctWithin1min":73.1,"pctWithin2min":80.8,"byTerminal":{"Far East":{"count":12,"pctWithin1min":66.7},"CARGO":{"count":7,"pctWithin1min":85.7}},"byTimeSlot":{"Morning":{"count":10,"pctWithin1min":60.0},"Night":{"count":8,"pctWithin1min":87.5}},"byDuration":{"Unknown":{"count":26,"pctWithin1min":73.1}}},{"event":"Baggage Offload AFT - Start","count":22,"pctWithin1min":72.7,"pctWithin2min":90.9,"byTerminal":{"T4":{"count":4,"pctWithin1min":50.0},"Far East":{"count":5,"pctWithin1min":80.0}},"byTimeSlot":{"Morning":{"count":8,"pctWithin1min":62.5},"Afternoon":{"count":5,"pctWithin1min":80.0},"Night":{"count":9,"pctWithin1min":77.8}},"byDuration":{"Medium":{"count":8,"pctWithin1min":62.5},"Unknown":{"count":14,"pctWithin1min":78.6}}},{"event":"Bus Passenger Disembarkment - End","count":11,"pctWithin1min":72.7,"pctWithin2min":72.7,"byTerminal":{"Far East":{"count":5,"pctWithin1min":60.0},"Apron6":{"count":3,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":5,"pctWithin1min":60.0},"Evening":{"count":3,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":11,"pctWithin1min":72.7}}},{"event":"Baggage Onload FWD - End","count":11,"pctWithin1min":72.7,"pctWithin2min":81.8,"byTerminal":{"T4":{"count":3,"pctWithin1min":66.7},"Far East":{"count":3,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":3,"pctWithin1min":100.0},"Night":{"count":5,"pctWithin1min":60.0}},"byDuration":{"Medium":{"count":5,"pctWithin1min":60.0},"Unknown":{"count":6,"pctWithin1min":83.3}}},{"event":"High loader AFT connected","count":18,"pctWithin1min":72.2,"pctWithin2min":77.8,"byTerminal":{"Far East":{"count":5,"pctWithin1min":60.0},"CARGO":{"count":7,"pctWithin1min":71.4}},"byTimeSlot":{"Morning":{"count":6,"pctWithin1min":66.7},"Night":{"count":7,"pctWithin1min":85.7}},"byDuration":{"Unknown":{"count":18,"pctWithin1min":72.2}}},{"event":"Jet bridge AFT - End","count":7,"pctWithin1min":71.4,"pctWithin2min":71.4,"byTerminal":{"T4":{"count":7,"pctWithin1min":71.4}},"byTimeSlot":{"Morning":{"count":2,"pctWithin1min":100.0},"Night":{"count":5,"pctWithin1min":60.0}},"byDuration":{"Medium":{"count":3,"pctWithin1min":66.7},"Unknown":{"count":4,"pctWithin1min":75.0}}},{"event":"Stairs FWD connected - Start","count":28,"pctWithin1min":71.4,"pctWithin2min":92.9,"byTerminal":{"Far East":{"count":12,"pctWithin1min":66.7},"Apron6":{"count":6,"pctWithin1min":83.3}},"byTimeSlot":{"Morning":{"count":17,"pctWithin1min":70.6},"Evening":{"count":5,"pctWithin1min":60.0}},"byDuration":{"Unknown":{"count":28,"pctWithin1min":71.4}}},{"event":"Conveyer Belt AFT connected - End","count":35,"pctWithin1min":71.4,"pctWithin2min":80.0,"byTerminal":{"Far East":{"count":10,"pctWithin1min":60.0},"CARGO":{"count":6,"pctWithin1min":83.3}},"byTimeSlot":{"Morning":{"count":13,"pctWithin1min":61.5},"Afternoon":{"count":9,"pctWithin1min":77.8},"Evening":{"count":5,"pctWithin1min":80.0},"Night":{"count":8,"pctWithin1min":75.0}},"byDuration":{"Medium":{"count":6,"pctWithin1min":66.7},"Unknown":{"count":29,"pctWithin1min":72.4}}},{"event":"Conveyer Belt FWD connected - Start","count":36,"pctWithin1min":69.4,"pctWithin2min":77.8,"byTerminal":{"T4":{"count":5,"pctWithin1min":60.0},"Far East":{"count":8,"pctWithin1min":62.5}},"byTimeSlot":{"Morning":{"count":11,"pctWithin1min":63.6},"Afternoon":{"count":10,"pctWithin1min":70.0},"Evening":{"count":7,"pctWithin1min":85.7},"Night":{"count":8,"pctWithin1min":62.5}},"byDuration":{"Medium":{"count":14,"pctWithin1min":57.1},"Long":{"count":3,"pctWithin1min":66.7},"Unknown":{"count":19,"pctWithin1min":78.9}}},{"event":"Conveyer Belt FWD connected - End","count":38,"pctWithin1min":68.4,"pctWithin2min":71.1,"byTerminal":{"T4":{"count":5,"pctWithin1min":60.0},"Far East":{"count":8,"pctWithin1min":50.0}},"byTimeSlot":{"Morning":{"count":12,"pctWithin1min":58.3},"Afternoon":{"count":10,"pctWithin1min":70.0},"Evening":{"count":7,"pctWithin1min":85.7},"Night":{"count":9,"pctWithin1min":66.7}},"byDuration":{"Medium":{"count":14,"pctWithin1min":57.1},"Long":{"count":3,"pctWithin1min":66.7},"Unknown":{"count":21,"pctWithin1min":76.2}}},{"event":"Windsheild Cleaning connected - End","count":3,"pctWithin1min":66.7,"pctWithin2min":100.0,"byTerminal":{"T4":{"count":3,"pctWithin1min":66.7}},"byTimeSlot":{"Night":{"count":2,"pctWithin1min":50.0},"Evening":{"count":1,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":3,"pctWithin1min":66.7}}},{"event":"Baggage Offload FWD - End","count":30,"pctWithin1min":66.7,"pctWithin2min":66.7,"byTerminal":{"T4":{"count":7,"pctWithin1min":42.9},"Far East":{"count":6,"pctWithin1min":66.7}},"byTimeSlot":{"Morning":{"count":10,"pctWithin1min":60.0},"Afternoon":{"count":8,"pctWithin1min":62.5},"Evening":{"count":5,"pctWithin1min":80.0},"Night":{"count":7,"pctWithin1min":71.4}},"byDuration":{"Medium":{"count":13,"pctWithin1min":53.8},"Long":{"count":3,"pctWithin1min":66.7},"Unknown":{"count":14,"pctWithin1min":78.6}}},{"event":"High loader AFT connected - End","count":18,"pctWithin1min":66.7,"pctWithin2min":66.7,"byTerminal":{"Far East":{"count":5,"pctWithin1min":60.0},"CARGO":{"count":7,"pctWithin1min":71.4}},"byTimeSlot":{"Morning":{"count":6,"pctWithin1min":50.0},"Night":{"count":7,"pctWithin1min":85.7}},"byDuration":{"Unknown":{"count":18,"pctWithin1min":66.7}}},{"event":"Baggage Offload FWD - Start","count":29,"pctWithin1min":65.5,"pctWithin2min":79.3,"byTerminal":{"T4":{"count":7,"pctWithin1min":42.9},"Far East":{"count":5,"pctWithin1min":80.0}},"byTimeSlot":{"Morning":{"count":9,"pctWithin1min":55.6},"Afternoon":{"count":8,"pctWithin1min":62.5},"Evening":{"count":5,"pctWithin1min":80.0},"Night":{"count":7,"pctWithin1min":71.4}},"byDuration":{"Medium":{"count":13,"pctWithin1min":53.8},"Long":{"count":3,"pctWithin1min":66.7},"Unknown":{"count":13,"pctWithin1min":76.9}}},{"event":"Container Offload FWD - Start","count":23,"pctWithin1min":65.2,"pctWithin2min":69.6,"byTerminal":{"CARGO":{"count":7,"pctWithin1min":57.1},"Cargo":{"count":4,"pctWithin1min":50.0}},"byTimeSlot":{"Afternoon":{"count":5,"pctWithin1min":60.0},"Night":{"count":8,"pctWithin1min":75.0}},"byDuration":{"Unknown":{"count":23,"pctWithin1min":65.2}}},{"event":"Aircraft Passenger Embark - Start","count":69,"pctWithin1min":63.8,"pctWithin2min":84.1,"byTerminal":{"T1":{"count":14,"pctWithin1min":64.3},"T3":{"count":12,"pctWithin1min":66.7},"T4":{"count":13,"pctWithin1min":53.8},"Far East":{"count":9,"pctWithin1min":77.8}},"byTimeSlot":{"Morning":{"count":19,"pctWithin1min":63.2},"Afternoon":{"count":18,"pctWithin1min":61.1},"Evening":{"count":14,"pctWithin1min":64.3},"Night":{"count":18,"pctWithin1min":66.7}},"byDuration":{"Medium":{"count":33,"pctWithin1min":63.6},"Long":{"count":7,"pctWithin1min":85.7},"Short":{"count":6,"pctWithin1min":50.0},"Unknown":{"count":23,"pctWithin1min":60.9}}},{"event":"Jet bridge AFT - Start","count":8,"pctWithin1min":62.5,"pctWithin2min":75.0,"byTerminal":{"T4":{"count":8,"pctWithin1min":62.5}},"byTimeSlot":{"Morning":{"count":2,"pctWithin1min":100.0},"Night":{"count":6,"pctWithin1min":50.0}},"byDuration":{"Medium":{"count":4,"pctWithin1min":50.0},"Unknown":{"count":4,"pctWithin1min":75.0}}},{"event":"Aircraft Passenger Embark - End","count":69,"pctWithin1min":62.3,"pctWithin2min":71.0,"byTerminal":{"T1":{"count":14,"pctWithin1min":64.3},"T3":{"count":12,"pctWithin1min":66.7},"T4":{"count":13,"pctWithin1min":53.8},"Far East":{"count":9,"pctWithin1min":66.7}},"byTimeSlot":{"Morning":{"count":19,"pctWithin1min":63.2},"Afternoon":{"count":18,"pctWithin1min":61.1},"Evening":{"count":14,"pctWithin1min":57.1},"Night":{"count":18,"pctWithin1min":66.7}},"byDuration":{"Medium":{"count":33,"pctWithin1min":60.6},"Long":{"count":7,"pctWithin1min":71.4},"Short":{"count":6,"pctWithin1min":50.0},"Unknown":{"count":23,"pctWithin1min":65.2}}},{"event":"Aircraft Passenger Disembark - End","count":76,"pctWithin1min":61.8,"pctWithin2min":76.3,"byTerminal":{"T1":{"count":17,"pctWithin1min":58.8},"T3":{"count":13,"pctWithin1min":61.5},"T4":{"count":15,"pctWithin1min":60.0},"Far East":{"count":9,"pctWithin1min":66.7}},"byTimeSlot":{"Morning":{"count":21,"pctWithin1min":61.9},"Afternoon":{"count":19,"pctWithin1min":63.2},"Evening":{"count":15,"pctWithin1min":60.0},"Night":{"count":21,"pctWithin1min":61.9}},"byDuration":{"Medium":{"count":36,"pctWithin1min":61.1},"Long":{"count":8,"pctWithin1min":75.0},"Short":{"count":7,"pctWithin1min":42.9},"Unknown":{"count":25,"pctWithin1min":64.0}}},{"event":"Container Offload FWD - End","count":23,"pctWithin1min":60.9,"pctWithin2min":69.6,"byTerminal":{"CARGO":{"count":7,"pctWithin1min":42.9},"Cargo":{"count":4,"pctWithin1min":50.0}},"byTimeSlot":{"Afternoon":{"count":5,"pctWithin1min":60.0},"Night":{"count":8,"pctWithin1min":62.5}},"byDuration":{"Unknown":{"count":23,"pctWithin1min":60.9}}},{"event":"Bus Passenger Embark - End","count":17,"pctWithin1min":58.8,"pctWithin2min":64.7,"byTerminal":{"Far East":{"count":8,"pctWithin1min":50.0},"Apron6":{"count":4,"pctWithin1min":75.0}},"byTimeSlot":{"Morning":{"count":9,"pctWithin1min":55.6},"Evening":{"count":4,"pctWithin1min":75.0}},"byDuration":{"Unknown":{"count":17,"pctWithin1min":58.8}}},{"event":"Conveyer Belt Bulk connected - Start","count":7,"pctWithin1min":57.1,"pctWithin2min":57.1,"byTerminal":{"CARGO":{"count":7,"pctWithin1min":57.1}},"byTimeSlot":{"Early Morning":{"count":5,"pctWithin1min":60.0},"Morning":{"count":2,"pctWithin1min":50.0}},"byDuration":{"Unknown":{"count":7,"pctWithin1min":57.1}}},{"event":"Baggage Offload AFT - End","count":23,"pctWithin1min":56.5,"pctWithin2min":65.2,"byTerminal":{"T4":{"count":5,"pctWithin1min":20.0},"Far East":{"count":5,"pctWithin1min":80.0}},"byTimeSlot":{"Morning":{"count":8,"pctWithin1min":37.5},"Afternoon":{"count":6,"pctWithin1min":66.7},"Night":{"count":9,"pctWithin1min":66.7}},"byDuration":{"Medium":{"count":9,"pctWithin1min":33.3},"Unknown":{"count":14,"pctWithin1min":71.4}}},{"event":"Fueling connected - Start","count":15,"pctWithin1min":53.3,"pctWithin2min":73.3,"byTerminal":{"T4":{"count":11,"pctWithin1min":45.5},"Far East":{"count":2,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":4,"pctWithin1min":25.0},"Afternoon":{"count":4,"pctWithin1min":75.0},"Night":{"count":7,"pctWithin1min":57.1}},"byDuration":{"Medium":{"count":10,"pctWithin1min":40.0},"Unknown":{"count":5,"pctWithin1min":80.0}}},{"event":"Container Offload AFT - End","count":14,"pctWithin1min":50.0,"pctWithin2min":64.3,"byTerminal":{"CARGO":{"count":7,"pctWithin1min":42.9},"Cargo":{"count":2,"pctWithin1min":50.0}},"byTimeSlot":{"Early Morning":{"count":3,"pctWithin1min":33.3},"Night":{"count":5,"pctWithin1min":60.0}},"byDuration":{"Unknown":{"count":14,"pctWithin1min":50.0}}},{"event":"Baggage Onload AFT - Start","count":8,"pctWithin1min":50.0,"pctWithin2min":50.0,"byTerminal":{"T4":{"count":2,"pctWithin1min":50.0},"Far East":{"count":2,"pctWithin1min":50.0}},"byTimeSlot":{"Morning":{"count":2,"pctWithin1min":50.0},"Night":{"count":4,"pctWithin1min":50.0}},"byDuration":{"Medium":{"count":4,"pctWithin1min":25.0},"Unknown":{"count":4,"pctWithin1min":75.0}}},{"event":"Baggage Onload FWD - Start","count":11,"pctWithin1min":45.5,"pctWithin2min":54.5,"byTerminal":{"T4":{"count":3,"pctWithin1min":33.3},"Far East":{"count":3,"pctWithin1min":66.7}},"byTimeSlot":{"Morning":{"count":3,"pctWithin1min":66.7},"Night":{"count":5,"pctWithin1min":40.0}},"byDuration":{"Medium":{"count":5,"pctWithin1min":20.0},"Unknown":{"count":6,"pctWithin1min":66.7}}},{"event":"Aircraft Passenger Disembark - Start","count":76,"pctWithin1min":44.7,"pctWithin2min":84.2,"byTerminal":{"T1":{"count":17,"pctWithin1min":41.2},"T3":{"count":13,"pctWithin1min":46.2},"T4":{"count":15,"pctWithin1min":46.7},"Far East":{"count":9,"pctWithin1min":44.4}},"byTimeSlot":{"Morning":{"count":21,"pctWithin1min":42.9},"Afternoon":{"count":19,"pctWithin1min":52.6},"Evening":{"count":15,"pctWithin1min":40.0},"Night":{"count":21,"pctWithin1min":42.9}},"byDuration":{"Medium":{"count":36,"pctWithin1min":41.7},"Long":{"count":8,"pctWithin1min":75.0},"Short":{"count":7,"pctWithin1min":28.6},"Unknown":{"count":25,"pctWithin1min":44.0}}},{"event":"Baggage Onload AFT - End","count":8,"pctWithin1min":25.0,"pctWithin2min":62.5,"byTerminal":{"T4":{"count":2,"pctWithin1min":0.0},"Far East":{"count":2,"pctWithin1min":50.0}},"byTimeSlot":{"Morning":{"count":2,"pctWithin1min":50.0},"Night":{"count":4,"pctWithin1min":25.0}},"byDuration":{"Medium":{"count":4,"pctWithin1min":0.0},"Unknown":{"count":4,"pctWithin1min":50.0}}},{"event":"First Bus Arrival Time","count":1,"pctWithin1min":0.0,"pctWithin2min":100.0,"byTerminal":{"Far East":{"count":1,"pctWithin1min":0.0}},"byTimeSlot":{"Morning":{"count":1,"pctWithin1min":0.0}},"byDuration":{"Unknown":{"count":1,"pctWithin1min":0.0}}},{"event":"Container Onload AFT - Start","count":1,"pctWithin1min":0.0,"pctWithin2min":100.0,"byTerminal":{"CARGO":{"count":1,"pctWithin1min":0.0}},"byTimeSlot":{"Morning":{"count":1,"pctWithin1min":0.0}},"byDuration":{"Unknown":{"count":1,"pctWithin1min":0.0}}},{"event":"Container Onload FWD - End","count":2,"pctWithin1min":0.0,"pctWithin2min":0.0,"byTerminal":{"CARGO":{"count":2,"pctWithin1min":0.0}},"byTimeSlot":{"Morning":{"count":2,"pctWithin1min":0.0}},"byDuration":{"Unknown":{"count":2,"pctWithin1min":0.0}}},{"event":"Container Onload FWD - Start","count":2,"pctWithin1min":50.0,"pctWithin2min":100.0,"byTerminal":{"CARGO":{"count":2,"pctWithin1min":50.0}},"byTimeSlot":{"Morning":{"count":2,"pctWithin1min":50.0}},"byDuration":{"Unknown":{"count":2,"pctWithin1min":50.0}}},{"event":"Container Onload AFT - End","count":1,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"CARGO":{"count":1,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":1,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":1,"pctWithin1min":100.0}}},{"event":"Last Bus Departure Time","count":1,"pctWithin1min":100.0,"pctWithin2min":100.0,"byTerminal":{"Far East":{"count":1,"pctWithin1min":100.0}},"byTimeSlot":{"Morning":{"count":1,"pctWithin1min":100.0}},"byDuration":{"Unknown":{"count":1,"pctWithin1min":100.0}}}]},"A":{"name":"All Data","description":"Includes all 117 turnarounds","overall":{"totalTurnarounds":117,"totalDataPoints":1917,"pctWithin1min":76.8,"pctWithin2min":85.0,"pctWithin5min":91.0},"filters":{"terminals":["Apron6","CARGO","Cargo","Far East","T1","T3","T4","T5"],"terminalStands":{"T1":["ST104","ST105","ST106","ST108"],"T3":["ST303","ST305","ST306"],"T4":["ST401","ST403","ST404","ST406M","ST407"],"T5":["511"],"Far East":["E20","E20L","E21R","E22L","E22R"],"CARGO":["C2","C3","C4","C5","C6"],"Cargo":["C2C"],"Apron6":["E20L","E21R","ST506R"]},"timeSlots":["Early Morning","Morning","Afternoon","Evening","Night"],"durations":["Short","Medium","Long","Unknown"]},"events":[]},"C":{"name":"Strict Filter","description":"Excludes 34 problematic turnarounds","overall":{"totalTurnarounds":83,"totalDataPoints":1260,"pctWithin1min":83.5,"pctWithin2min":91.2,"pctWithin5min":95.9},"filters":{"terminals":["Apron6","CARGO","Cargo","Far East","T1","T3","T4","T5"],"terminalStands":{"T1":["ST104","ST105","ST106","ST108"],"T3":["ST303","ST305","ST306"],"T4":["ST401","ST403","ST404","ST406M","ST407"],"T5":["511"],"Far East":["E20","E20L","E21R","E22L","E22R"],"CARGO":["C2","C3","C4","C5","C6"],"Cargo":["C2C"],"Apron6":["E20L","E21R","ST506R"]},"timeSlots":["Early Morning","Morning","Afternoon","Evening","Night"],"durations":["Short","Medium","Long","Unknown"]},"events":[]}};
+dashboardData.A.events = dashboardData.B.events;
+dashboardData.C.events = dashboardData.B.events;
+
+const COLORS = { excellent: '#10b981', good: '#22c55e', acceptable: '#84cc16', warning: '#eab308', poor: '#f97316', bad: '#ef4444', primary: '#3b82f6' };
+const getAccuracyColor = (pct) => { if (pct >= 90) return COLORS.excellent; if (pct >= 80) return COLORS.good; if (pct >= 70) return COLORS.acceptable; if (pct >= 60) return COLORS.warning; if (pct >= 50) return COLORS.poor; return COLORS.bad; };
+const getAccuracyLabel = (pct1min, pct2min) => { 
+  const avg = pct2min !== undefined ? (pct1min + pct2min) / 2 : pct1min;
+  if (avg >= 90) return 'Excellent'; 
+  if (avg >= 75) return 'Good'; 
+  if (avg >= 70) return 'Satisfactory';
+  // If <1min is not good but <2min is >=70%, still satisfactory
+  if (pct2min !== undefined && pct2min >= 70) return 'Satisfactory';
+  return 'Needs Improvement'; 
+};
+
+const AccuracyGauge = ({ value, size = 'large', label }) => {
+  const radius = size === 'large' ? 70 : 45;
+  const strokeWidth = size === 'large' ? 10 : 7;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (value / 100) * circumference;
+  const color = getAccuracyColor(value);
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative">
+        <svg width={(radius + strokeWidth) * 2} height={(radius + strokeWidth) * 2}>
+          <circle cx={radius + strokeWidth} cy={radius + strokeWidth} r={radius} fill="none" stroke="#e5e7eb" strokeWidth={strokeWidth} />
+          <circle cx={radius + strokeWidth} cy={radius + strokeWidth} r={radius} fill="none" stroke={color} strokeWidth={strokeWidth} strokeDasharray={circumference} strokeDashoffset={circumference - progress} strokeLinecap="round" transform={`rotate(-90 ${radius + strokeWidth} ${radius + strokeWidth})`} className="transition-all duration-1000 ease-out" />
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className={`font-bold ${size === 'large' ? 'text-3xl' : 'text-lg'}`} style={{ color }}>{value.toFixed(1)}%</span>
+          {size === 'large' && <span className="text-xs text-gray-500 mt-1">{getAccuracyLabel(value)}</span>}
+        </div>
+      </div>
+      {label && <span className="text-sm text-gray-600 mt-2 font-medium">{label}</span>}
+    </div>
+  );
+};
+
+const SettingsPopover = ({ selectedOption, setSelectedOption, isOpen, setIsOpen }) => {
+  const options = [{ id: 'B', ...dashboardData.B }, { id: 'C', ...dashboardData.C }];
+  return (
+    <div className="relative">
+      <button onClick={() => setIsOpen(!isOpen)} className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-all">
+        <Settings size={18} className="text-gray-500" />
+        <span className="text-sm font-medium text-gray-700">{dashboardData[selectedOption].name}</span>
+        <ChevronDown size={16} className={`text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      {isOpen && (<><div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+        <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-gray-100 z-20 overflow-hidden">
+          <div className="p-3 border-b border-gray-100 bg-gray-50"><p className="text-xs font-semibold text-gray-500 uppercase">Data Filter Options</p></div>
+          {options.map((opt) => (<button key={opt.id} onClick={() => { setSelectedOption(opt.id); setIsOpen(false); }} className={`w-full px-4 py-3 text-left hover:bg-gray-50 transition-all border-b border-gray-50 last:border-0 ${selectedOption === opt.id ? 'bg-blue-50' : ''}`}>
+            <div className="flex items-center justify-between"><div><p className={`font-medium ${selectedOption === opt.id ? 'text-blue-600' : 'text-gray-800'}`}>{opt.name}</p><p className="text-xs text-gray-500 mt-0.5">{opt.description}</p></div><span className="text-xs text-gray-400">{opt.overall.totalTurnarounds}/117</span></div>
+          </button>))}
+        </div></>)}
+    </div>
+  );
+};
+
+const EventAccuracyBar = ({ event, pct1min, count }) => (
+  <div className="py-3 border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-sm font-medium text-gray-700 truncate max-w-[220px]">{event}</span>
+      <div className="flex items-center gap-3"><span className="text-xs text-gray-400">{count}</span><span className="text-sm font-bold min-w-[50px] text-right" style={{ color: getAccuracyColor(pct1min) }}>{pct1min.toFixed(0)}%</span></div>
+    </div>
+    <div className="h-2 bg-gray-100 rounded-full overflow-hidden"><div className="h-full transition-all duration-500 rounded-full" style={{ width: `${pct1min}%`, backgroundColor: getAccuracyColor(pct1min) }} /></div>
+  </div>
+);
+
+export default function TMSDashboard() {
+  const [selectedOption, setSelectedOption] = useState('B');
+  const [selectedView, setSelectedView] = useState('executive');
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [terminalFilter, setTerminalFilter] = useState('all');
+  const [standFilter, setStandFilter] = useState('all');
+  const [timeSlotFilter, setTimeSlotFilter] = useState('all');
+  const [durationFilter, setDurationFilter] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortConfig, setSortConfig] = useState({ key: 'avgAccuracy', direction: 'desc' }); // Sort by status (best to worst) by default
+
+  const currentData = dashboardData[selectedOption];
+  const events = currentData.events || [];
+
+  const filteredEvents = useMemo(() => {
+    let result = events.map(e => {
+      let stats = { ...e };
+      if (terminalFilter !== 'all' && e.byTerminal) {
+        if (standFilter !== 'all' && e.byTerminalStand && e.byTerminalStand[terminalFilter]) {
+          const standData = e.byTerminalStand[terminalFilter][standFilter];
+          if (standData) stats = { ...e, count: standData.count, pctWithin1min: standData.pctWithin1min, pctWithin2min: standData.pctWithin2min || standData.pctWithin1min };
+          else return null;
+        } else {
+          const termData = e.byTerminal[terminalFilter];
+          if (termData) stats = { ...e, count: termData.count, pctWithin1min: termData.pctWithin1min, pctWithin2min: termData.pctWithin2min || termData.pctWithin1min };
+          else return null;
+        }
+      }
+      if (timeSlotFilter !== 'all' && e.byTimeSlot) {
+        const tsData = e.byTimeSlot[timeSlotFilter];
+        if (tsData) stats = { ...stats, count: tsData.count, pctWithin1min: tsData.pctWithin1min };
+        else return null;
+      }
+      if (durationFilter !== 'all' && e.byDuration) {
+        const durData = e.byDuration[durationFilter];
+        if (durData) stats = { ...stats, count: durData.count, pctWithin1min: durData.pctWithin1min };
+        else return null;
+      }
+      // Calculate statusScore for sorting (higher = better status)
+      const avg = (stats.pctWithin1min + stats.pctWithin2min) / 2;
+      if (avg >= 90) stats.avgAccuracy = avg;
+      else if (avg >= 75) stats.avgAccuracy = avg;
+      else if (avg >= 70) stats.avgAccuracy = avg;
+      else if (stats.pctWithin2min >= 70) stats.avgAccuracy = 70; // Satisfactory due to 2min rule
+      else stats.avgAccuracy = avg;
+      return stats;
+    }).filter(e => e !== null);
+    if (searchQuery) result = result.filter(e => e.event.toLowerCase().includes(searchQuery.toLowerCase()));
+    result.sort((a, b) => { const aVal = a[sortConfig.key]; const bVal = b[sortConfig.key]; return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal; });
+    return result;
+  }, [events, terminalFilter, standFilter, timeSlotFilter, durationFilter, searchQuery, sortConfig]);
+
+  const topEvents = useMemo(() => [...events].sort((a, b) => b.pctWithin1min - a.pctWithin1min).slice(0, 8), [events]);
+  const bottomEvents = useMemo(() => [...events].filter(e => e.count >= 5).sort((a, b) => b.pctWithin1min - a.pctWithin1min).slice(-6), [events]);
+  
+  // Calculate status breakdown for pie chart
+  const statusBreakdown = useMemo(() => {
+    const counts = { 'Excellent': 0, 'Good': 0, 'Satisfactory': 0, 'Needs Improvement': 0 };
+    events.forEach(e => {
+      const status = getAccuracyLabel(e.pctWithin1min, e.pctWithin2min);
+      counts[status]++;
+    });
+    return [
+      { name: 'Excellent', value: counts['Excellent'], color: '#10b981' },
+      { name: 'Good', value: counts['Good'], color: '#22c55e' },
+      { name: 'Satisfactory', value: counts['Satisfactory'], color: '#84cc16' },
+      { name: 'Needs Improvement', value: counts['Needs Improvement'], color: '#f59e0b' }
+    ].filter(item => item.value > 0);
+  }, [events]);
+  const handleSort = (key) => { setSortConfig(prev => ({ key, direction: prev.key === key && prev.direction === 'desc' ? 'asc' : 'desc' })); };
+  const SortIcon = ({ columnKey }) => { if (sortConfig.key !== columnKey) return <ArrowUpDown size={14} className="text-gray-300" />; return sortConfig.direction === 'desc' ? <ArrowUp size={14} className="text-blue-500" /> : <ArrowUp size={14} className="text-blue-500 rotate-180" />; };
+  const availableStands = terminalFilter !== 'all' ? (currentData.filters.terminalStands[terminalFilter] || []) : [];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg"><Plane className="text-white" size={28} /></div>
+              <div><h1 className="text-2xl font-bold text-gray-800">RAC Baseer TMS Accuracy Dashboard</h1><p className="text-gray-500 text-sm">Turnaround Management System Performance Analytics</p></div>
+            </div>
+            <SettingsPopover selectedOption={selectedOption} setSelectedOption={setSelectedOption} isOpen={settingsOpen} setIsOpen={setSettingsOpen} />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-2">
+          <div className="flex gap-2">
+            {[{ id: 'executive', label: '📊 Executive Dashboard' }, { id: 'detailed', label: '🔍 Detailed View' }].map(tab => (
+              <button key={tab.id} onClick={() => setSelectedView(tab.id)} className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all ${selectedView === tab.id ? 'bg-blue-500 text-white shadow-sm' : 'text-gray-600 hover:bg-gray-100'}`}>{tab.label}</button>
+            ))}
+          </div>
+        </div>
+
+        {selectedView === 'executive' && (
+          <div className="space-y-6">
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="md:col-span-1 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Overall System Accuracy</h3>
+                <AccuracyGauge value={currentData.overall.pctWithin1min} size="large" />
+                <p className="text-center text-sm text-gray-500 mt-4">Detections within 1 minute</p>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <div className="text-center p-3 bg-gray-50 rounded-lg"><p className="text-2xl font-bold text-gray-800">{currentData.overall.totalTurnarounds}</p><p className="text-xs text-gray-500">Turnarounds</p></div>
+                  <div className="text-center p-3 bg-gray-50 rounded-lg"><p className="text-2xl font-bold text-gray-800">{currentData.overall.totalDataPoints}</p><p className="text-xs text-gray-500">Data Points</p></div>
+                </div>
+              </div>
+              <div className="md:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Accuracy by Threshold</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center"><AccuracyGauge value={currentData.overall.pctWithin1min} size="small" label="≤1 min" /></div>
+                  <div className="text-center"><AccuracyGauge value={currentData.overall.pctWithin2min} size="small" label="≤2 min" /></div>
+                  <div className="text-center"><AccuracyGauge value={currentData.overall.pctWithin5min} size="small" label="≤5 min" /></div>
+                </div>
+                <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
+                  <div className="flex items-center gap-3"><CheckCircle2 className="text-green-600" size={24} />
+                    <div><p className="font-semibold text-green-800">System Performance: {getAccuracyLabel(currentData.overall.pctWithin1min, currentData.overall.pctWithin2min)}</p><p className="text-sm text-green-600">{currentData.overall.pctWithin1min >= 75 ? 'The Baseer TMS is detecting events accurately within acceptable thresholds.' : 'Some areas may benefit from calibration review.'}</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Event Status Breakdown */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-6">Event Status Distribution</h3>
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                <div className="h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie data={statusBreakdown} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={3} dataKey="value" label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} labelLine={false}>
+                        {statusBreakdown.map((entry, index) => (<Cell key={`cell-${index}`} fill={entry.color} />))}
+                      </Pie>
+                      <Tooltip formatter={(value) => [`${value} events`, 'Count']} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-gray-600 mb-4">Out of <span className="font-bold text-gray-800">{events.length} events</span> tracked by the system:</p>
+                  {statusBreakdown.map((status) => (
+                    <div key={status.name} className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: `${status.color}15` }}>
+                      <div className="flex items-center gap-3">
+                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: status.color }}></div>
+                        <span className="font-medium text-gray-700">{status.name}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-bold text-gray-800">{status.value}</span>
+                        <span className="text-gray-500 text-sm ml-1">({((status.value / events.length) * 100).toFixed(0)}%)</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {selectedView === 'detailed' && (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <h3 className="text-lg font-semibold text-gray-800">All Events Performance</h3>
+              <div className="flex items-center gap-2">
+                <div className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /><input type="text" placeholder="Search events..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-48" /></div>
+              </div>
+            </div>
+            <div className="space-y-4 mb-6">
+              {/* Terminal Filter */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-2">Terminal</label>
+                <div className="flex flex-wrap gap-2">
+                  {['all', ...currentData.filters.terminals].map(t => (
+                    <button key={t} onClick={() => { setTerminalFilter(t); setStandFilter('all'); }}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${terminalFilter === t ? 'bg-blue-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                      {t === 'all' ? 'All' : t}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Stand Filter - only show when terminal selected */}
+              {terminalFilter !== 'all' && availableStands.length > 0 && (
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase mb-2">Stand</label>
+                  <div className="flex flex-wrap gap-2">
+                    {['all', ...availableStands].map(s => (
+                      <button key={s} onClick={() => setStandFilter(s)}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${standFilter === s ? 'bg-blue-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                        {s === 'all' ? 'All' : s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Time Slot Filter */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-2">Time of Day</label>
+                <div className="flex flex-wrap gap-2">
+                  {['all', ...currentData.filters.timeSlots].map(ts => (
+                    <button key={ts} onClick={() => setTimeSlotFilter(ts)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${timeSlotFilter === ts ? 'bg-indigo-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                      {ts === 'all' ? 'All' : ts}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Duration Filter */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase mb-2">Turnaround Duration</label>
+                <div className="flex flex-wrap gap-2">
+                  {[{id: 'all', label: 'All'}, {id: 'Short', label: 'Short (≤60m)'}, {id: 'Medium', label: 'Medium (60-120m)'}, {id: 'Long', label: 'Long (>120m)'}].map(d => (
+                    <button key={d.id} onClick={() => setDurationFilter(d.id)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${durationFilter === d.id ? 'bg-purple-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Event</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('count')}><div className="flex items-center justify-center gap-1">Samples <SortIcon columnKey="count" /></div></th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('pctWithin1min')}><div className="flex items-center justify-center gap-1">≤1min <SortIcon columnKey="pctWithin1min" /></div></th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('pctWithin2min')}><div className="flex items-center justify-center gap-1">≤2min <SortIcon columnKey="pctWithin2min" /></div></th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('avgAccuracy')}><div className="flex items-center justify-center gap-1">Status <SortIcon columnKey="avgAccuracy" /></div></th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredEvents.map((event) => (
+                    <tr key={event.event} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 text-sm font-medium text-gray-700">{event.event}</td>
+                      <td className="px-4 py-3 text-sm text-center text-gray-600">{event.count}</td>
+                      <td className="px-4 py-3 text-sm text-center font-medium" style={{ color: getAccuracyColor(event.pctWithin1min) }}>{event.pctWithin1min.toFixed(1)}%</td>
+                      <td className="px-4 py-3 text-sm text-center font-medium" style={{ color: getAccuracyColor(event.pctWithin2min) }}>{event.pctWithin2min.toFixed(1)}%</td>
+                      <td className="px-4 py-3 text-center">{(() => { 
+                      const status = getAccuracyLabel(event.pctWithin1min, event.pctWithin2min);
+                      const colorClass = status === 'Excellent' ? 'bg-emerald-100 text-emerald-800' : status === 'Good' ? 'bg-green-100 text-green-800' : status === 'Satisfactory' ? 'bg-lime-100 text-lime-800' : 'bg-amber-100 text-amber-800';
+                      return <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${colorClass}`}>{status}</span>;
+                    })()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 text-sm text-gray-500 text-center">Showing {filteredEvents.length} events</div>
+          </div>
+        )}
+
+        <div className="text-center text-sm text-gray-400 py-4">RAC Baseer TMS Accuracy Report • Data as of January 2026</div>
+      </div>
+    </div>
+  );
+}
